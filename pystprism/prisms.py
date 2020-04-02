@@ -195,6 +195,8 @@ def probabilistic_space_time_prism(in_features, timestamp_field, disk_interval,
                 k_center_layer = result.getOutput(0)
                 # Get a EucDistance surface radiating out from this point
                 k_distances = EucDistance(k_center_layer, cell_size=cell_size)
+                # Fill in the center of k_distances to avoid donut effect in pstp disks
+                k_distances = Con(EqualTo(k_distances, 0), (1.0 / cell_size), k_distances)
                 # Use multiplication to isolate disk distance values
                 disk_distances = Times(k_distances, Z_i_j_disk)
                 disk_idw = (1.0 / disk_distances)
